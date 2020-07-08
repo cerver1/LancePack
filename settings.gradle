@@ -1,0 +1,3 @@
+include ':myFirstLibrary'
+include ':app'
+rootProject.name = "lancePack"
