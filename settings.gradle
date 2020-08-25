@@ -1,4 +1,3 @@
 include ':lanceSolver'
-include ':myFirstLibrary'
 include ':app'
 rootProject.name = "lancePack"

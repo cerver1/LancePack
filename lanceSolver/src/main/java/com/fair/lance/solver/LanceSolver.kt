@@ -57,7 +57,7 @@ object LanceSolver {
     //removes all white space and returning a simple tight list.
     private fun splitUserInput(userInput: String): MutableList<String> {
         val convertedString = userInput.split("").toMutableList()
-        convertedString.removeIf { obj: String? -> obj == "" || obj == " "}
+        convertedString.forEach { obj -> if(obj == "" || obj == " ") convertedString.remove(obj) }
         return convertedString
     }
     //finds the special operators within the list
