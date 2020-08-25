@@ -3,9 +3,9 @@ package com.fair.lance.solver
 import kotlin.math.min
 import kotlin.math.pow
 
-object LanceSolver {
+class LanceSolver {
 
-    private fun stringEquationSolver(entry: String) : String {
+    fun stringEquationSolver(entry: String) : String {
 
         var equation: String = entry
         var special = searchForSpecial(equation)
