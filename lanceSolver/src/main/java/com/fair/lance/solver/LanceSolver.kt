@@ -5,6 +5,10 @@ import kotlin.math.pow
 
 class LanceSolver {
 
+    fun solver(problem: String): String {
+        return problem
+    }
+
     fun stringEquationSolver(entry: String) : String {
 
         var equation: String = entry
@@ -55,10 +59,10 @@ class LanceSolver {
 
     }
     //removes all white space and returning a simple tight list.
-    private fun splitUserInput(userInput: String): MutableList<String> {
-        val convertedString = userInput.split("").toMutableList()
-        convertedString.forEach { obj -> if(obj == "" || obj == " ") convertedString.remove(obj) }
-        return convertedString
+    fun splitUserInput(userInput: String): MutableList<String> {
+
+        val trim = userInput.replace("\\s".toRegex(), "")
+        return trim.split("").toMutableList()
     }
     //finds the special operators within the list
     private fun searchForSpecial(equation: String) : MutableList<Int> {
