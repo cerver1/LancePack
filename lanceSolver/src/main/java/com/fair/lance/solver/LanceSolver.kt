@@ -1,13 +1,47 @@
 package com.fair.lance.solver
 
-import java.lang.Exception
+
 import kotlin.math.min
 import kotlin.math.pow
 
 class LanceSolver {
 
-    fun solver(problem: String): String {
-        return problem
+    fun solver(originalProblem: String): String {
+        var equation = splitUserInput(originalProblem)
+        var special = searchForSpecial(equation)
+        var originalScope: String
+        var scope: String
+        var firstNumber: Int
+        var secondNumber: Int
+        var operator: Char
+        var solution = ""
+        var snippet: String
+        var parenthesis = trackBrackets(equation)
+
+        while (special.isNotEmpty()) {
+            originalScope = sliceParenthesis(equation, parenthesis[0])
+            scope = originalScope
+            special = searchForSpecial(scope)
+
+            while (special.isNotEmpty()) {
+                val it = sliceNumber(scope.toMutableList(),special)
+                firstNumber = it.first
+                secondNumber = it.second
+                operator = it.third
+                snippet = "$firstNumber$operator$secondNumber"
+                solution = operationAttempt(firstNumber, secondNumber, operator)
+                scope = replaceEquation(snippet, solution, scope)
+                special = searchForSpecial(scope)
+            }
+
+            equation = replaceEquation("($originalScope)", scope, equation)
+            parenthesis = trackBrackets(equation)
+            special = searchForSpecial(equation)
+
+
+        }
+
+        return solution
     }
 
     /**
@@ -63,10 +97,8 @@ class LanceSolver {
      */
     // removes all white space and returning a simple tight list.
     // tested
-    fun splitUserInput(userInput: String): MutableList<String> {
-
-        val trim = userInput.replace("\\s".toRegex(), "")
-        return trim.split("").toMutableList()
+    fun splitUserInput(userInput: String): String {
+        return userInput.replace("\\s".toRegex(), "")
     }
 
     // finds the special operators within the list
@@ -105,10 +137,7 @@ class LanceSolver {
 
     // returns the first preceding and succeeding values of a special value
     // tested
-    fun sliceNumber(
-        userEquation: MutableList<String>,
-        special: MutableList<Int>
-    ): Triple<Int, Int, String> {
+    fun sliceNumber(userEquation: MutableList<Char>, special: MutableList<Int>): Triple<Int, Int, Char> {
         val firstNumber: Int
         val secondNumber: Int
         //val equationScope: String
@@ -120,7 +149,7 @@ class LanceSolver {
                 .joinToString(separator = "").toInt()
             Triple(firstNumber, secondNumber, userEquation[special.first()])
         } else {
-            firstNumber = userEquation.slice(0 until special.first()).toMutableList()
+            firstNumber = userEquation.slice(0 until special.first())
                 .joinToString(separator = "").toInt()
             secondNumber = userEquation.slice(special.first() + 1 until userEquation.size)
                 .joinToString(separator = "").toInt()
@@ -129,27 +158,15 @@ class LanceSolver {
 
     }
 
-    /**
-    //turns a list of string numbers into a an single int value
-
-    private fun extractValue(listedNumber:MutableList<String>): String {
-    val number = StringBuilder()
-    listedNumber.forEach {
-    number.append(it)
-    }
-
-    return number.toString()
-    }
-     */
     //run calculations on first and second number based on the received operator
     // tested
-    fun operationAttempt(firstN: Int, secondN: Int, operator: String): String {
+    fun operationAttempt(firstN: Int, secondN: Int, operator: Char): String {
         return when (operator) {
-            "^" -> firstN.toDouble().pow(secondN).toString()
-            "*" -> firstN.times(secondN).toString()
-            "/" -> firstN.div(secondN.toDouble()).toString()
-            "+" -> firstN.plus(secondN).toString()
-            "-" -> firstN.minus(secondN).toString()
+            '^' -> firstN.toDouble().pow(secondN).toString()
+            '*' -> firstN.times(secondN).toString()
+            '/' -> firstN.div(secondN.toDouble()).toString()
+            '+' -> firstN.plus(secondN).toString()
+            '-' -> firstN.minus(secondN).toString()
             else -> "null"
         }
     }
@@ -186,6 +203,7 @@ class LanceSolver {
         return groupStack
     }
 
+    // failing
     fun endPointMultiplication(equation: String): String {
 
         var parenthesis = trackBrackets(equation)
@@ -194,8 +212,7 @@ class LanceSolver {
         val newEquation = StringBuilder(equation)
 
         parenthesis.forEach { bracket ->
-            println(parenthesis)
-
+            parenthesis = trackBrackets(newEquation.toString())
             val prefix = (bracket.first)
             val precede = try {
                 newEquation[prefix - 1]
@@ -206,8 +223,7 @@ class LanceSolver {
             if (!specialList.contains(precede) && stringNumbers.contains(precede)) {
                 newEquation.insert(prefix, "*")
             }
-            parenthesis = trackBrackets(newEquation.toString())
-            println(parenthesis)
+            //parenthesis = trackBrackets(newEquation.toString())
         }
 
         parenthesis = trackBrackets(newEquation.toString())
@@ -226,10 +242,6 @@ class LanceSolver {
             }
             parenthesis = trackBrackets(newEquation.toString())
         }
-
-
-            //parenthesis = trackBrackets(newEquation.toString())
-
 
         return newEquation.toString()
 
